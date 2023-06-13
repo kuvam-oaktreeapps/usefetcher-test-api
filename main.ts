@@ -4,24 +4,26 @@ import data from "./data.json" assert { type: "json" };
 
 const router = new Router();
 router
-  .get("/", (context) => {
-    context.response.body = "Welcome to dinosaur API!";
-  })
-  .get("/api", (context) => {
-    context.response.body = data;
-  })
-  .get("/api/:dinosaur", (context) => {
-    if (context?.params?.dinosaur) {
-      const found = data.find((item) =>
-        item.name.toLowerCase() === context.params.dinosaur.toLowerCase()
-      );
-      if (found) {
-        context.response.body = found;
-      } else {
-        context.response.body = "No dinosaurs found.";
-      }
-    }
-  });
+    .get("/dinos/:name", ({ response, params }) => {
+        response.status = 200
+        response.body = data.find((dino) => dino.name === params.name);
+    })
+    .get("/dinos/all", ({ response }) => {
+        response.status = 200
+        response.body = data;
+    })
+    .post("/dinos/create", async ({ request, response }) => {
+        const reqData = await request.body().value
+
+        if (!reqData.name || !reqData.description) {
+            response.status = 400;
+            response.body = { message: "Invalid dino data" };
+            return;
+        }
+
+        response.status = 201
+        response.body = { message: "Dino created!" }
+    })
 
 const app = new Application();
 app.use(oakCors()); // Enable CORS for All Routes
