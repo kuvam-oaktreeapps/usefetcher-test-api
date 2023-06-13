@@ -4,13 +4,22 @@ import data from "./data.json" assert { type: "json" };
 
 const router = new Router();
 router
-    .get("/dinos/:name", ({ response, params }) => {
+    .get("/", ({ response }) => {
         response.status = 200
-        response.body = data.find((dino) => dino.name === params.name);
+        response.body = "Hello world!"
     })
     .get("/dinos/all", ({ response }) => {
-        response.status = 200
         response.body = data;
+    })
+    .get("/dinos/:name", ({ response, params }) => {
+        const dino = data.find((dino) => dino.name === params.name);
+
+        if (!dino) {
+            response.status = 404
+            response.body = { message: "Dino not found!" }
+        }
+
+        response.body = dino;
     })
     .post("/dinos/create", async ({ request, response }) => {
         const reqData = await request.body().value
@@ -22,7 +31,7 @@ router
         }
 
         response.status = 201
-        response.body = { message: "Dino created!" }
+        response.body = data;
     })
 
 const app = new Application();
