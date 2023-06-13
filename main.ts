@@ -8,8 +8,11 @@ router
         response.status = 200
         response.body = "Hello world!"
     })
-    .get("/dinos/all", ({ response }) => {
-        response.body = data;
+    .get("/dinos/all", ({ response, request }) => {
+        const start = parseInt(request.url.searchParams.get("start") || "0");
+        const take = parseInt(request.url.searchParams.get("take") || "15");
+
+        response.body = data.slice(start, start + take);
     })
     .get("/dinos/:name", ({ response, params }) => {
         const dino = data.find((dino) => dino.name === params.name);
