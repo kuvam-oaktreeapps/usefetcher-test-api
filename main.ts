@@ -31,7 +31,7 @@ router
         }
 
         response.status = 201
-        response.body = data;
+        response.body = { message: "Dino created successfully!" };
     })
 
 const app = new Application();
